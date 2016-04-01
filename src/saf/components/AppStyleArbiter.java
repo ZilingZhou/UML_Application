@@ -18,4 +18,6 @@ public interface AppStyleArbiter {
     public static final String CLASS_FILE_BUTTON = "file_button";
     
     public void initStyle();
+    
+    
 }

@@ -18,6 +18,10 @@ import static saf.settings.AppPropertyType.*;
 import static saf.settings.AppStartupConstants.FILE_PROTOCOL;
 import static saf.settings.AppStartupConstants.PATH_IMAGES;
 import saf.components.AppStyleArbiter;
+import static saf.components.AppStyleArbiter.CLASS_BORDERED_PANE;
+import static saf.components.AppStyleArbiter.CLASS_FILE_BUTTON;
+import static saf.settings.AppStartupConstants.FILE_PROTOCOL;
+import static saf.settings.AppStartupConstants.PATH_IMAGES;
 
 /**
  * This class provides the basic user interface for this application,
@@ -45,6 +49,7 @@ public class AppGUI implements AppStyleArbiter {
     // THIS IS THE TOP TOOLBAR AND ITS CONTROLS
     protected FlowPane fileToolbarPane;
     protected Button newButton;
+    protected Button loadButton;
     protected Button saveButton;
     protected Button exitButton;
     
@@ -75,9 +80,6 @@ public class AppGUI implements AppStyleArbiter {
 		
         // AND FINALLY START UP THE WINDOW (WITHOUT THE WORKSPACE)
         initWindow();
-        
-        //use css
-        initStyle();
     }
     
     /**
@@ -118,6 +120,7 @@ public class AppGUI implements AppStyleArbiter {
         // ALL THE OTHER BUTTONS ARE ALWAYS ENABLED
         // ONCE EDITING THAT FIRST COURSE BEGINS
 	newButton.setDisable(false);
+        loadButton.setDisable(false);
 	exitButton.setDisable(false);
 
         // NOTE THAT THE NEW, LOAD, AND EXIT BUTTONS
@@ -132,21 +135,26 @@ public class AppGUI implements AppStyleArbiter {
      * This function initializes all the buttons in the toolbar at the top of
      * the application window. These are related to file management.
      */
-    //
-    
     private void initFileToolbar(AppTemplate app) {
         fileToolbarPane = new FlowPane();
 
         // HERE ARE OUR FILE TOOLBAR BUTTONS, NOTE THAT SOME WILL
         // START AS ENABLED (false), WHILE OTHERS DISABLED (true)
         newButton = initChildButton(fileToolbarPane,	NEW_ICON.toString(),	    NEW_TOOLTIP.toString(),	false);
+        loadButton = initChildButton(fileToolbarPane,	LOAD_ICON.toString(),	    LOAD_TOOLTIP.toString(),	false);
         saveButton = initChildButton(fileToolbarPane,	SAVE_ICON.toString(),	    SAVE_TOOLTIP.toString(),	true);
         exitButton = initChildButton(fileToolbarPane,	EXIT_ICON.toString(),	    EXIT_TOOLTIP.toString(),	false);
-
+        
+        
+        
+        
 	// AND NOW SETUP THEIR EVENT HANDLERS
         fileController = new AppFileController(app);
         newButton.setOnAction(e -> {
             fileController.handleNewRequest();
+        });
+        loadButton.setOnAction(e -> {
+            fileController.handleLoadRequest();
         });
         saveButton.setOnAction(e -> {
             fileController.handleSaveRequest();
@@ -232,18 +240,10 @@ public class AppGUI implements AppStyleArbiter {
      */
     @Override
     public void initStyle() {
-        primaryScene.getStylesheets().add("wmp_style.css");
-  //      appPane.getStylesheets().add("wmp_style.css");
-  //      fileToolbarPane.getStylesheets().add("wmp_style.css");
-        
-      //  appPane.getStyleClass().add("dark_boarder");
-      //  appPane.getStyleClass().add("light_blue_background");
-      //  fileToolbarPane.getStyleClass().add("light_blue_background");
-	
-        fileToolbarPane.getStyleClass().add(CLASS_BORDERED_PANE);
+	fileToolbarPane.getStyleClass().add(CLASS_BORDERED_PANE);
 	newButton.getStyleClass().add(CLASS_FILE_BUTTON);
+	loadButton.getStyleClass().add(CLASS_FILE_BUTTON);
 	saveButton.getStyleClass().add(CLASS_FILE_BUTTON);
 	exitButton.getStyleClass().add(CLASS_FILE_BUTTON);
-        
     }
 }

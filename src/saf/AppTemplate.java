@@ -73,7 +73,7 @@ public abstract class AppTemplate extends Application {
 	messageDialog.init(primaryStage);
 	AppYesNoCancelDialogSingleton yesNoDialog = AppYesNoCancelDialogSingleton.getSingleton();
 	yesNoDialog.init(primaryStage);
-	
+        
 	PropertiesManager props = PropertiesManager.getPropertiesManager();
 
 	try {
@@ -94,7 +94,7 @@ public abstract class AppTemplate extends Application {
 		// WE CAN INITIALIZE THE GUI
 		gui = new AppGUI(primaryStage, appTitle, this);
 		workspaceComponent = builder.buildWorkspaceComponent();
-		
+		//System.out.println(()getWorkspaceComponent());
 		// NOW INIT ALL THE STYLE
 		initStylesheet();
 		gui.initStyle();
@@ -103,7 +103,7 @@ public abstract class AppTemplate extends Application {
 	}catch (Exception e/*IOException ioe*/) {
                 AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
                 dialog.show(props.getProperty(PROPERTIES_LOAD_ERROR_TITLE), props.getProperty(PROPERTIES_LOAD_ERROR_MESSAGE));
-	}
+	}        
     }
     
     /**
