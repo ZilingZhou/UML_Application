@@ -3,12 +3,15 @@ package saf.ui;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import properties_manager.PropertiesManager;
@@ -48,10 +51,35 @@ public class AppGUI implements AppStyleArbiter {
     
     // THIS IS THE TOP TOOLBAR AND ITS CONTROLS
     protected FlowPane fileToolbarPane;
+    protected ToolBar bar1;
+    protected ToolBar bar2;
+    protected ToolBar bar3;
+    protected VBox vb;
     protected Button newButton;
     protected Button loadButton;
     protected Button saveButton;
     protected Button exitButton;
+    protected Button saveAs;
+    protected Button photo;
+    protected Button code;
+    //----------------------
+    protected Button select;
+    protected Button resize;
+    protected Button addInterface;
+    protected Button addClass;
+    protected Button remove;
+    protected Button undo;
+    protected Button redo;
+    //------------------------
+    protected Button zoomIn;
+    protected Button zoomOut;
+    protected CheckBox grid;
+    protected CheckBox snap;
+    
+    
+    
+    
+    
     
     // HERE ARE OUR DIALOGS
     protected AppYesNoCancelDialogSingleton yesNoCancelDialog;
@@ -77,7 +105,8 @@ public class AppGUI implements AppStyleArbiter {
 	       
         // INIT THE TOOLBAR
         initFileToolbar(app);
-		
+        //INIT THE HANDLER
+        initController();
         // AND FINALLY START UP THE WINDOW (WITHOUT THE WORKSPACE)
         initWindow();
     }
@@ -137,7 +166,7 @@ public class AppGUI implements AppStyleArbiter {
      */
     private void initFileToolbar(AppTemplate app) {
         fileToolbarPane = new FlowPane();
-
+        
         // HERE ARE OUR FILE TOOLBAR BUTTONS, NOTE THAT SOME WILL
         // START AS ENABLED (false), WHILE OTHERS DISABLED (true)
         newButton = initChildButton(fileToolbarPane,	NEW_ICON.toString(),	    NEW_TOOLTIP.toString(),	false);
@@ -145,8 +174,14 @@ public class AppGUI implements AppStyleArbiter {
         saveButton = initChildButton(fileToolbarPane,	SAVE_ICON.toString(),	    SAVE_TOOLTIP.toString(),	true);
         exitButton = initChildButton(fileToolbarPane,	EXIT_ICON.toString(),	    EXIT_TOOLTIP.toString(),	false);
         
-        
-        
+        bar1 = new ToolBar();
+        bar1.getItems().addAll(newButton,loadButton,saveButton,exitButton);
+        fileToolbarPane.getChildren().removeAll();
+        fileToolbarPane.getChildren().add(bar1);
+        saveAs = new Button("saveAs");
+        bar2= new ToolBar();
+        bar2.getItems().add(saveAs);
+        fileToolbarPane.getChildren().add(bar2);
         
 	// AND NOW SETUP THEIR EVENT HANDLERS
         fileController = new AppFileController(app);
@@ -154,7 +189,7 @@ public class AppGUI implements AppStyleArbiter {
             fileController.handleNewRequest();
         });
         loadButton.setOnAction(e -> {
-            fileController.handleLoadRequest();
+       //     fileController.handleLoadRequest();
         });
         saveButton.setOnAction(e -> {
             fileController.handleSaveRequest();
@@ -162,6 +197,29 @@ public class AppGUI implements AppStyleArbiter {
         exitButton.setOnAction(e -> {
             fileController.handleExitRequest();
         });	
+    }
+    public void initController(){
+        
+    }
+    public Button initBarItem(ToolBar toolbar, String icon, String tooltip, boolean disabled) {
+        PropertiesManager props = PropertiesManager.getPropertiesManager();
+	
+	// LOAD THE ICON FROM THE PROVIDED FILE
+        String imagePath = FILE_PROTOCOL + PATH_IMAGES + props.getProperty(icon);
+        Image buttonImage = new Image(imagePath);
+	
+	// NOW MAKE THE BUTTON
+        Button button = new Button();
+        button.setDisable(disabled);
+        button.setGraphic(new ImageView(buttonImage));
+        Tooltip buttonTooltip = new Tooltip(props.getProperty(tooltip));
+        button.setTooltip(buttonTooltip);
+	
+	// PUT THE BUTTON IN THE TOOLBAR
+        toolbar.getItems().add(button);
+	
+	// AND RETURN THE COMPLETED BUTTON
+        return button;
     }
 
     // INITIALIZE THE WINDOW (i.e. STAGE) PUTTING ALL THE CONTROLS
@@ -241,7 +299,8 @@ public class AppGUI implements AppStyleArbiter {
     @Override
     public void initStyle() {
 	fileToolbarPane.getStyleClass().add(CLASS_BORDERED_PANE);
-	newButton.getStyleClass().add(CLASS_FILE_BUTTON);
+        bar1.getStyleClass().add(CLASS_BORDERED_PANE);
+        newButton.getStyleClass().add(CLASS_FILE_BUTTON);
 	loadButton.getStyleClass().add(CLASS_FILE_BUTTON);
 	saveButton.getStyleClass().add(CLASS_FILE_BUTTON);
 	exitButton.getStyleClass().add(CLASS_FILE_BUTTON);
