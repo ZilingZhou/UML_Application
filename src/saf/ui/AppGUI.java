@@ -166,22 +166,19 @@ public class AppGUI implements AppStyleArbiter {
      */
     private void initFileToolbar(AppTemplate app) {
         fileToolbarPane = new FlowPane();
-        
+        vb = new VBox();
         // HERE ARE OUR FILE TOOLBAR BUTTONS, NOTE THAT SOME WILL
         // START AS ENABLED (false), WHILE OTHERS DISABLED (true)
         newButton = initChildButton(fileToolbarPane,	NEW_ICON.toString(),	    NEW_TOOLTIP.toString(),	false);
         loadButton = initChildButton(fileToolbarPane,	LOAD_ICON.toString(),	    LOAD_TOOLTIP.toString(),	false);
         saveButton = initChildButton(fileToolbarPane,	SAVE_ICON.toString(),	    SAVE_TOOLTIP.toString(),	true);
+        saveAs = initChildButton(fileToolbarPane, SAVE_AS_ICON.toString(), SAVE_AS_TOOLTIP.toString(), true);
         exitButton = initChildButton(fileToolbarPane,	EXIT_ICON.toString(),	    EXIT_TOOLTIP.toString(),	false);
         
-        bar1 = new ToolBar();
-        bar1.getItems().addAll(newButton,loadButton,saveButton,exitButton);
-        fileToolbarPane.getChildren().removeAll();
-        fileToolbarPane.getChildren().add(bar1);
-        saveAs = new Button("saveAs");
-        bar2= new ToolBar();
-        bar2.getItems().add(saveAs);
-        fileToolbarPane.getChildren().add(bar2);
+        photo = initChildButton(vb, EXPORT_CODE_ICON.toString(), EXPORT_CODE_TOOLTIP.toString(), true);
+        code = initChildButton(vb, EXPORT_PHOTO_ICON.toString(), EXPORT_PHOTO_TOOLTIP.toString(), true);
+        
+        fileToolbarPane.getChildren().add(vb);
         
 	// AND NOW SETUP THEIR EVENT HANDLERS
         fileController = new AppFileController(app);
@@ -250,7 +247,7 @@ public class AppGUI implements AppStyleArbiter {
 	PropertiesManager props = PropertiesManager.getPropertiesManager();
         String appIcon = FILE_PROTOCOL + PATH_IMAGES + props.getProperty(APP_LOGO);
         primaryStage.getIcons().add(new Image(appIcon));
-
+           
         // NOW TIE THE SCENE TO THE WINDOW AND OPEN THE WINDOW
         primaryStage.setScene(primaryScene);
         primaryStage.show();
