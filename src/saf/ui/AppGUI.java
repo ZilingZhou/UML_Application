@@ -1,5 +1,6 @@
 package saf.ui;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
@@ -54,7 +56,9 @@ public class AppGUI implements AppStyleArbiter {
     protected ToolBar bar1;
     protected ToolBar bar2;
     protected ToolBar bar3;
-    protected VBox vb;
+    protected HBox hb1;
+    protected HBox hb1C;
+    protected VBox vb1;
     protected Button newButton;
     protected Button loadButton;
     protected Button saveButton;
@@ -63,6 +67,7 @@ public class AppGUI implements AppStyleArbiter {
     protected Button photo;
     protected Button code;
     //----------------------
+    protected HBox hb2;
     protected Button select;
     protected Button resize;
     protected Button addInterface;
@@ -71,6 +76,8 @@ public class AppGUI implements AppStyleArbiter {
     protected Button undo;
     protected Button redo;
     //------------------------
+    protected HBox hb3;
+    protected VBox vb3;
     protected Button zoomIn;
     protected Button zoomOut;
     protected CheckBox grid;
@@ -151,7 +158,14 @@ public class AppGUI implements AppStyleArbiter {
 	newButton.setDisable(false);
         loadButton.setDisable(false);
 	exitButton.setDisable(false);
-
+        
+        saveAs.setDisable(false);
+        photo.setDisable(false);
+        code.setDisable(false);
+        
+        addClass.setDisable(false);
+        addInterface.setDisable(false);
+        
         // NOTE THAT THE NEW, LOAD, AND EXIT BUTTONS
         // ARE NEVER DISABLED SO WE NEVER HAVE TO TOUCH THEM
     }
@@ -165,21 +179,50 @@ public class AppGUI implements AppStyleArbiter {
      * the application window. These are related to file management.
      */
     private void initFileToolbar(AppTemplate app) {
-        fileToolbarPane = new FlowPane();
-        vb = new VBox();
+        fileToolbarPane = new FlowPane(20,0);
+        fileToolbarPane.setPadding(new Insets(5));
+        vb1 = new VBox(2);
+        hb1 = new HBox(2);
+        hb1.setPadding(new Insets(15,0,0,0));
+        hb1C = new HBox();
+        hb1C.setPadding(new Insets(10));
         // HERE ARE OUR FILE TOOLBAR BUTTONS, NOTE THAT SOME WILL
         // START AS ENABLED (false), WHILE OTHERS DISABLED (true)
-        newButton = initChildButton(fileToolbarPane,	NEW_ICON.toString(),	    NEW_TOOLTIP.toString(),	false);
-        loadButton = initChildButton(fileToolbarPane,	LOAD_ICON.toString(),	    LOAD_TOOLTIP.toString(),	false);
-        saveButton = initChildButton(fileToolbarPane,	SAVE_ICON.toString(),	    SAVE_TOOLTIP.toString(),	true);
-        saveAs = initChildButton(fileToolbarPane, SAVE_AS_ICON.toString(), SAVE_AS_TOOLTIP.toString(), true);
-        exitButton = initChildButton(fileToolbarPane,	EXIT_ICON.toString(),	    EXIT_TOOLTIP.toString(),	false);
+        newButton = initChildButton(hb1,	NEW_ICON.toString(),	    NEW_TOOLTIP.toString(),	false);
+        loadButton = initChildButton(hb1,	LOAD_ICON.toString(),	    LOAD_TOOLTIP.toString(),	false);
+        saveButton = initChildButton(hb1,	SAVE_ICON.toString(),	    SAVE_TOOLTIP.toString(),	true);
+        saveAs = initChildButton(hb1, SAVE_AS_ICON.toString(), SAVE_AS_TOOLTIP.toString(), true);
+        exitButton = initChildButton(hb1,	EXIT_ICON.toString(),	    EXIT_TOOLTIP.toString(),	false);
         
-        photo = initChildButton(vb, EXPORT_CODE_ICON.toString(), EXPORT_CODE_TOOLTIP.toString(), true);
-        code = initChildButton(vb, EXPORT_PHOTO_ICON.toString(), EXPORT_PHOTO_TOOLTIP.toString(), true);
+        photo = initChildButton(vb1, EXPORT_PHOTO_ICON.toString(), EXPORT_PHOTO_TOOLTIP.toString(), true);
+        code = initChildButton(vb1, EXPORT_CODE_ICON.toString(), EXPORT_CODE_TOOLTIP.toString(), true);
+        code.prefHeightProperty().bind(photo.prefHeightProperty());
+        code.prefWidthProperty().bind(photo.prefWidthProperty());        
+        hb1C.getChildren().addAll(hb1,vb1);
+        //------------
         
-        fileToolbarPane.getChildren().add(vb);
-        
+        hb2 = new HBox(2);
+        hb2.setPadding(new Insets(17));
+    select = initChildButton(hb2, SELECT_ICON.toString(), SELECT_TOOLTIP.toString(), true);
+    resize = initChildButton(hb2, RESIZE_ICON.toString(), RESIZE_TOOLTIP.toString(), true);
+    addClass = initChildButton(hb2, ADD_CLASS_ICON.toString(), ADD_CLASS_TOOLTIP.toString(), true);
+    addInterface = initChildButton(hb2, ADD_INTERFACE_ICON.toString(), ADD_INTERFACE_TOOLTIP.toString(), true);
+    remove = initChildButton(hb2, REMOVE_ICON.toString(), REMOVE_TOOLTIP.toString(), true);
+    undo = initChildButton(hb2, UNDO_ICON.toString(), UNDO_TOOLTIP.toString(), true);
+    redo = initChildButton(hb2, REDO_ICON.toString(), REDO_TOOLTIP.toString(), true);
+    
+    hb3 = new HBox(2);
+    hb3.setPadding(new Insets(16));
+    vb3 = new VBox(2);
+    zoomIn = initChildButton(hb3, ZOOM_IN_ICON.toString(), ZOOM_IN_TOOLTIP.toString(), false);
+    zoomOut = initChildButton(hb3, ZOOM_OUT_ICON.toString(), ZOOM_OUT_TOOLTIP.toString(), false);
+    snap = new CheckBox("snap");
+    grid = new CheckBox("grid");
+    vb3.getChildren().addAll(snap,grid);
+    hb3.getChildren().add(vb3);
+    
+    fileToolbarPane.getChildren().addAll(hb1C,hb2,hb3);
+    
 	// AND NOW SETUP THEIR EVENT HANDLERS
         fileController = new AppFileController(app);
         newButton.setOnAction(e -> {
@@ -296,7 +339,9 @@ public class AppGUI implements AppStyleArbiter {
     @Override
     public void initStyle() {
 	fileToolbarPane.getStyleClass().add(CLASS_BORDERED_PANE);
-        bar1.getStyleClass().add(CLASS_BORDERED_PANE);
+        hb1C.getStyleClass().add(CLASS_BORDERED_PANE);
+        hb2.getStyleClass().add(CLASS_BORDERED_PANE);
+        hb3.getStyleClass().add(CLASS_BORDERED_PANE);
         newButton.getStyleClass().add(CLASS_FILE_BUTTON);
 	loadButton.getStyleClass().add(CLASS_FILE_BUTTON);
 	saveButton.getStyleClass().add(CLASS_FILE_BUTTON);
