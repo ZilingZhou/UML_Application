@@ -12,6 +12,8 @@ import javafx.scene.Node;
  * @author ziling
  */
 public interface AppPageEditComponent {
-    public Node addClass();
+    public void handleAddClassRequest();
+    public void handleSelectElementRequest();
     
+   
 }

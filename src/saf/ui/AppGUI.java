@@ -69,13 +69,13 @@ public class AppGUI implements AppStyleArbiter {
     protected Button code;
     //----------------------
     protected HBox hb2;
-    protected Button select;
-    protected Button resize;
+    Button select;
+    Button resize;
     protected Button addInterface;
     protected Button addClass;
-    protected Button remove;
-    protected Button undo;
-    protected Button redo;
+    Button remove;
+    Button undo;
+    Button redo;
     //------------------------
     protected HBox hb3;
     protected VBox vb3;
@@ -176,6 +176,7 @@ public class AppGUI implements AppStyleArbiter {
     }
     public void updateFoolProof(){
         select.setDisable(true);
+        resize.setDisable(false);
         remove.setDisable(true);
         undo.setDisable(true);
         redo.setDisable(true);
@@ -370,5 +371,40 @@ public class AppGUI implements AppStyleArbiter {
 	loadButton.getStyleClass().add(CLASS_FILE_BUTTON);
 	saveButton.getStyleClass().add(CLASS_FILE_BUTTON);
 	exitButton.getStyleClass().add(CLASS_FILE_BUTTON);
+    }
+
+    /**
+     * @return the select
+     */
+    public Button getSelect() {
+        return select;
+    }
+
+    /**
+     * @return the resize
+     */
+    public Button getResize() {
+        return resize;
+    }
+
+    /**
+     * @return the remove
+     */
+    public Button getRemove() {
+        return remove;
+    }
+
+    /**
+     * @return the undo
+     */
+    public Button getUndo() {
+        return undo;
+    }
+
+    /**
+     * @return the redo
+     */
+    public Button getRedo() {
+        return redo;
     }
 }
