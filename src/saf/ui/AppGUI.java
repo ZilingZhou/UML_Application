@@ -25,6 +25,7 @@ import static saf.settings.AppStartupConstants.PATH_IMAGES;
 import saf.components.AppStyleArbiter;
 import static saf.components.AppStyleArbiter.CLASS_BORDERED_PANE;
 import static saf.components.AppStyleArbiter.CLASS_FILE_BUTTON;
+import saf.controller.AppEditController;
 import static saf.settings.AppStartupConstants.FILE_PROTOCOL;
 import static saf.settings.AppStartupConstants.PATH_IMAGES;
 
@@ -40,7 +41,7 @@ import static saf.settings.AppStartupConstants.PATH_IMAGES;
 public class AppGUI implements AppStyleArbiter {
     // THIS HANDLES INTERACTIONS WITH FILE-RELATED CONTROLS
     protected AppFileController fileController;
-
+    protected AppEditController appEditController;
     // THIS IS THE APPLICATION WINDOW
     protected Stage primaryStage;
 
@@ -113,7 +114,7 @@ public class AppGUI implements AppStyleArbiter {
         // INIT THE TOOLBAR
         initFileToolbar(app);
         //INIT THE HANDLER
-        initController();
+        initController(app);
         // AND FINALLY START UP THE WINDOW (WITHOUT THE WORKSPACE)
         initWindow();
     }
@@ -166,10 +167,19 @@ public class AppGUI implements AppStyleArbiter {
         addClass.setDisable(false);
         addInterface.setDisable(false);
         
+        zoomIn.setDisable(false);
+        zoomOut.setDisable(false);
+        snap.setDisable(false);
+        grid.setDisable(false);
         // NOTE THAT THE NEW, LOAD, AND EXIT BUTTONS
         // ARE NEVER DISABLED SO WE NEVER HAVE TO TOUCH THEM
     }
-
+    public void updateFoolProof(){
+        select.setDisable(true);
+        remove.setDisable(true);
+        undo.setDisable(true);
+        redo.setDisable(true);
+    }
     /****************************************************************************/
     /* BELOW ARE ALL THE PRIVATE HELPER METHODS WE USE FOR INITIALIZING OUR AppGUI */
     /****************************************************************************/
@@ -214,17 +224,24 @@ public class AppGUI implements AppStyleArbiter {
     hb3 = new HBox(2);
     hb3.setPadding(new Insets(16));
     vb3 = new VBox(2);
-    zoomIn = initChildButton(hb3, ZOOM_IN_ICON.toString(), ZOOM_IN_TOOLTIP.toString(), false);
-    zoomOut = initChildButton(hb3, ZOOM_OUT_ICON.toString(), ZOOM_OUT_TOOLTIP.toString(), false);
+    zoomIn = initChildButton(hb3, ZOOM_IN_ICON.toString(), ZOOM_IN_TOOLTIP.toString(), true);
+    zoomOut = initChildButton(hb3, ZOOM_OUT_ICON.toString(), ZOOM_OUT_TOOLTIP.toString(), true);
     snap = new CheckBox("snap");
+    snap.setDisable(true);
     grid = new CheckBox("grid");
+    grid.setDisable(true);
     vb3.getChildren().addAll(snap,grid);
     hb3.getChildren().add(vb3);
     
     fileToolbarPane.getChildren().addAll(hb1C,hb2,hb3);
     
-	// AND NOW SETUP THEIR EVENT HANDLERS
+	
+    }
+    public void initController(AppTemplate app){
+        // AND NOW SETUP THEIR EVENT HANDLERS
         fileController = new AppFileController(app);
+        appEditController = new AppEditController(app);
+        
         newButton.setOnAction(e -> {
             fileController.handleNewRequest();
         });
@@ -236,9 +253,16 @@ public class AppGUI implements AppStyleArbiter {
         });
         exitButton.setOnAction(e -> {
             fileController.handleExitRequest();
-        });	
-    }
-    public void initController(){
+        });
+        
+        select.setOnAction(e -> {
+            appEditController.handleSelectElementRequest();
+        });
+        
+        addClass.setOnAction(e ->{
+            appEditController.handleAddClassRequest();
+        });
+        
         
     }
     public Button initBarItem(ToolBar toolbar, String icon, String tooltip, boolean disabled) {

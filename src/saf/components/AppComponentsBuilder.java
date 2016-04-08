@@ -13,4 +13,6 @@ public interface AppComponentsBuilder {
     public AppDataComponent buildDataComponent() throws Exception;
     public AppFileComponent buildFileComponent() throws Exception;
     public AppWorkspaceComponent buildWorkspaceComponent() throws Exception;
+    public AppPageEditComponent buildPageEditCompoent() throws Exception;
+    public AppViewComponent buildViewCompoent() throws Exception;
 }

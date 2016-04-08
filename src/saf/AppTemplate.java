@@ -11,6 +11,8 @@ import java.net.URL;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import properties_manager.PropertiesManager;
+import saf.components.AppPageEditComponent;
+import saf.components.AppViewComponent;
 import static saf.settings.AppPropertyType.APP_CSS;
 import static saf.settings.AppPropertyType.APP_PATH_CSS;
 import static saf.settings.AppPropertyType.APP_TITLE;
@@ -45,6 +47,12 @@ public abstract class AppTemplate extends Application {
 
     // AND THEN THE COMPONENT FOR THE GUI WORKSPACE
     AppWorkspaceComponent workspaceComponent;
+    
+    //The compoent for page edit
+    AppPageEditComponent pageEditComponent;
+    
+    //The compoent for page view
+    AppViewComponent viewComponent;
     
     // THIS IS THE APP'S FULL JavaFX GUI. NOTE THAT ALL APPS WOULD
     // SHARE A COMMON UI EXCEPT FOR THE CUSTOM WORKSPACE
@@ -89,6 +97,8 @@ public abstract class AppTemplate extends Application {
 		AppComponentsBuilder builder = makeAppBuilderHook();
 		fileComponent = builder.buildFileComponent();
 		dataComponent = builder.buildDataComponent();
+                setPageEditComponent(builder.buildPageEditCompoent());
+                setViewComponent(builder.buildViewCompoent());
 
 		// AND NOW THAT THE COMPONENTS HAVE BEEN INSTANTIATED
 		// WE CAN INITIALIZE THE GUI
@@ -144,5 +154,33 @@ public abstract class AppTemplate extends Application {
 	    dialog.show(props.getProperty(PROPERTIES_LOAD_ERROR_TITLE), props.getProperty(PROPERTIES_LOAD_ERROR_MESSAGE));
 	    return false;
 	}
+    }
+
+    /**
+     * @return the pageEditComponent
+     */
+    public AppPageEditComponent getPageEditComponent() {
+        return pageEditComponent;
+    }
+
+    /**
+     * @param pageEditComponent the pageEditComponent to set
+     */
+    public void setPageEditComponent(AppPageEditComponent pageEditComponent) {
+        this.pageEditComponent = pageEditComponent;
+    }
+
+    /**
+     * @return the viewComponent
+     */
+    public AppViewComponent getViewComponent() {
+        return viewComponent;
+    }
+
+    /**
+     * @param viewComponent the viewComponent to set
+     */
+    public void setViewComponent(AppViewComponent viewComponent) {
+        this.viewComponent = viewComponent;
     }
 }
