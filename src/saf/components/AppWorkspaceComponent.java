@@ -59,4 +59,5 @@ public abstract class AppWorkspaceComponent implements AppStyleArbiter {
     // THE DEFINITION OF THIS CLASS SHOULD BE PROVIDED
     // BY THE CONCRETE WORKSPACE
     public abstract void reloadWorkspace();
+    
 }

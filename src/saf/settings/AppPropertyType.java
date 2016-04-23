@@ -73,5 +73,9 @@ public enum AppPropertyType {
 	SAVE_WORK_TITLE,
 	WORK_FILE_EXT,
 	WORK_FILE_EXT_DESC,
-	PROPERTIES_
+	PROPERTIES_,
+        LOAD_ERROR_TITLE,
+        LOAD_ERROR_MESSAGE,
+        LOAD_WORK_TITLE,
+        
 }

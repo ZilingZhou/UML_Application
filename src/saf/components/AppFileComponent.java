@@ -14,10 +14,8 @@ import java.io.IOException;
  */
 public interface AppFileComponent {
     public void saveData(AppDataComponent data, String filePath) throws IOException;
-    public void saveAsData(AppDataComponent data, String filePath) throws IOException;
     public void exportData(AppDataComponent data, String filePath) throws IOException;
     public void loadData(AppDataComponent data, String filePath) throws IOException;
-    public void saveAsCode(AppDataComponent data, String filePath) throws IOException;
     public void saveAsPhoto(AppDataComponent data, String filePath) throws IOException;
     
 }

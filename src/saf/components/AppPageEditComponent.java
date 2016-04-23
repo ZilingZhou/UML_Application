@@ -12,7 +12,7 @@ import javafx.scene.Node;
  * @author ziling
  */
 public interface AppPageEditComponent {
-    public void handleAddClassRequest();
+    public void handleAddClassRequest(boolean isInterface);
     public void handleSelectElementRequest();
     
    

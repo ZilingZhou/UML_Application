@@ -247,13 +247,17 @@ public class AppGUI implements AppStyleArbiter {
             fileController.handleNewRequest();
         });
         loadButton.setOnAction(e -> {
-       //     fileController.handleLoadRequest();
+            fileController.handleLoadRequest();
         });
         saveButton.setOnAction(e -> {
             fileController.handleSaveRequest();
         });
         exitButton.setOnAction(e -> {
             fileController.handleExitRequest();
+        });
+        
+        code.setOnAction(e -> {
+            fileController.handleExportRequest();
         });
         
         select.setOnAction(e -> {

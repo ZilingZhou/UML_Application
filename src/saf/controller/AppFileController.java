@@ -10,6 +10,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import properties_manager.PropertiesManager;
 import saf.AppTemplate;
+import saf.components.AppFileComponent;
+import static saf.settings.AppPropertyType.LOAD_ERROR_MESSAGE;
+import static saf.settings.AppPropertyType.LOAD_ERROR_TITLE;
+import static saf.settings.AppPropertyType.LOAD_WORK_TITLE;
 import static saf.settings.AppPropertyType.WORK_FILE_EXT;
 import static saf.settings.AppPropertyType.WORK_FILE_EXT_DESC;
 import static saf.settings.AppPropertyType.NEW_COMPLETED_MESSAGE;
@@ -74,7 +78,7 @@ public class AppFileController {
      * This method starts the process of editing new Work. If work is
      * already being edited, it will prompt the user to save it first.
      * 
-     * @param gui The user interface editing the Course.
+     * 
      */
     public void handleNewRequest() {
 	AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
@@ -105,6 +109,7 @@ public class AppFileController {
                 // REFRESH THE GUI, WHICH WILL ENABLE AND DISABLE
                 // THE APPROPRIATE CONTROLS
                 app.getGUI().updateToolbarControls(saved);
+		app.getWorkspaceComponent().reloadWorkspace();
 
                 // TELL THE USER NEW WORK IS UNDERWAY
 		dialog.show(props.getProperty(NEW_COMPLETED_TITLE), props.getProperty(NEW_COMPLETED_MESSAGE));
@@ -116,12 +121,90 @@ public class AppFileController {
     }
 
     /**
+     * This method lets the user open a Course saved to a file. It will also
+     * make sure data for the current Course is not lost.
+     * 
+     * 
+     */
+    public void handleLoadRequest() {
+        try {
+            // WE MAY HAVE TO SAVE CURRENT WORK
+            boolean continueToOpen = true;
+            if (!saved) {
+                // THE USER CAN OPT OUT HERE WITH A CANCEL
+                continueToOpen = promptToSave();
+            }
+
+            // IF THE USER REALLY WANTS TO OPEN A Course
+            if (continueToOpen) {
+                // GO AHEAD AND PROCEED LOADING A Course
+                promptToOpen();
+            }
+        } catch (IOException ioe) {
+            // SOMETHING WENT WRONG
+	    AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+	    PropertiesManager props = PropertiesManager.getPropertiesManager();
+	    dialog.show(props.getProperty(LOAD_ERROR_TITLE), props.getProperty(LOAD_ERROR_MESSAGE));
+        }
+    }
+    
+    public void handleExportRequest(){
+        // WE'LL NEED THIS TO GET CUSTOM STUFF
+	PropertiesManager props = PropertiesManager.getPropertiesManager();
+        try{
+	    // OTHERWISE WE NEED TO PROMPT THE USER
+		// PROMPT THE USER FOR A FILE NAME
+		FileChooser fc = new FileChooser();
+		fc.setInitialDirectory(new File(PATH_WORK));
+		fc.setTitle(props.getProperty(SAVE_WORK_TITLE));
+		fc.getExtensionFilters().addAll(
+		new ExtensionFilter(props.getProperty(WORK_FILE_EXT_DESC), props.getProperty(WORK_FILE_EXT)));
+
+		File selectedFile = fc.showSaveDialog(app.getGUI().getWindow());
+		if (selectedFile != null) {
+		    exportToCode(selectedFile);
+		}
+	    
+        }catch (IOException ioe) {
+	    AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+	    dialog.show(props.getProperty(LOAD_ERROR_TITLE), props.getProperty(LOAD_ERROR_MESSAGE));
+        }
+    }
+    private void exportToCode(File selectedFile) throws IOException{
+        app.getFileComponent().exportData(app.getDataComponent(), selectedFile.getPath());
+        //File file = new File();
+	// MARK IT AS SAVED
+	//currentWorkFile = selectedFile;
+	//saved = true;
+	
+	// TELL THE USER THE FILE HAS BEEN SAVED
+//	AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+//	PropertiesManager props = PropertiesManager.getPropertiesManager();
+//        dialog.show(props.getProperty(SAVE_COMPLETED_TITLE),props.getProperty(SAVE_COMPLETED_MESSAGE));
+		    
+	// AND REFRESH THE GUI, WHICH WILL ENABLE AND DISABLE
+	// THE APPROPRIATE CONTROLS
+//	app.getGUI().updateToolbarControls(saved);	
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /**
      * This method will save the current course to a file. Note that we already
      * know the name of the file, so we won't need to prompt the user.
      * 
-     * @param gui The user interface editing the Course.
      * 
-     * @param courseToSave The course being edited that is to be saved to a file.
+     * 
+     * 
      */
     public void handleSaveRequest() {
 	// WE'LL NEED THIS TO GET CUSTOM STUFF
@@ -147,7 +230,7 @@ public class AppFileController {
 	    }
         } catch (IOException ioe) {
 	    AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
-	    dialog.show(props.getProperty(SAVE_ERROR_TITLE), props.getProperty(SAVE_ERROR_MESSAGE));
+	    dialog.show(props.getProperty(LOAD_ERROR_TITLE), props.getProperty(LOAD_ERROR_MESSAGE));
         }
     }
     
@@ -174,7 +257,7 @@ public class AppFileController {
      * This method will exit the application, making sure the user doesn't lose
      * any data first.
      * 
-     * @param gui
+     * 
      */
     public void handleExitRequest() {
         try {
@@ -258,6 +341,41 @@ public class AppFileController {
         // BUT FOR BOTH YES AND NO WE DO WHATEVER THE USER
         // HAD IN MIND IN THE FIRST PLACE
         return true;
+    }
+
+    /**
+     * This helper method asks the user for a file to open. The user-selected
+     * file is then loaded and the GUI updated. Note that if the user cancels
+     * the open process, nothing is done. If an error occurs loading the file, a
+     * message is displayed, but nothing changes.
+     */
+    private void promptToOpen() {
+	// WE'LL NEED TO GET CUSTOMIZED STUFF WITH THIS
+	PropertiesManager props = PropertiesManager.getPropertiesManager();
+	
+        // AND NOW ASK THE USER FOR THE FILE TO OPEN
+        FileChooser fc = new FileChooser();
+        fc.setInitialDirectory(new File(PATH_WORK));
+	fc.setTitle(props.getProperty(LOAD_WORK_TITLE));
+        File selectedFile = fc.showOpenDialog(app.getGUI().getWindow());
+
+        // ONLY OPEN A NEW FILE IF THE USER SAYS OK
+        if (selectedFile != null) {
+            try {
+                AppDataComponent dataManager = app.getDataComponent();
+		AppFileComponent fileManager = app.getFileComponent();
+                fileManager.loadData(dataManager, selectedFile.getAbsolutePath());
+                app.getWorkspaceComponent().reloadWorkspace();
+
+		// MAKE SURE THE WORKSPACE IS ACTIVATED
+		app.getWorkspaceComponent().activateWorkspace(app.getGUI().getAppPane());
+                saved = true;
+                app.getGUI().updateToolbarControls(saved);
+            } catch (Exception e) {
+                AppMessageDialogSingleton dialog = AppMessageDialogSingleton.getSingleton();
+                dialog.show(props.getProperty(LOAD_ERROR_TITLE), props.getProperty(LOAD_ERROR_MESSAGE));
+            }
+        }
     }
 
     /**

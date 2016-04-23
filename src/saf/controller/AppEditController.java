@@ -34,7 +34,7 @@ public class AppEditController {
     }
     public void handleAddClassRequest(){
         AppPageEditComponent comp = app.getPageEditComponent();
-        comp.handleAddClassRequest();
+        comp.handleAddClassRequest(false);
     }
     
    
